@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Career Copilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#14213d;--accent:#f97316;--bg:#f4f7fb;--card:#fff;--text:#182230;--muted:#64748b;--border:#dce3ed;--success:#16834a;--danger:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+body.dark{--bg:#0c1220;--card:#151e2f;--text:#e8edf6;--muted:#a7b2c5;--border:#2b3850;--primary:#0b1020}
+header{background:linear-gradient(130deg,var(--primary),#263c61);color:white;padding:32px 20px;text-align:center}
+header h1{margin:0;font-size:clamp(27px,4vw,40px);letter-spacing:-1.2px}header h1 span{color:var(--accent)}header p{margin:8px auto 0;max-width:650px;color:#dbe5f3}
+.wrap{max-width:1100px;margin:auto;padding:24px 18px 44px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:18px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}.btn,button{border:0;border-radius:10px;padding:11px 14px;font:600 13px Inter, sans-serif;cursor:pointer}
+.btn{background:var(--card);color:var(--text);border:1px solid var(--border)}.primary{background:var(--accent);color:#fff}.btn:disabled{opacity:.6;cursor:wait}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card,.result{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 4px 16px #1720330a}
+.card h2,.card h3{font-size:16px;margin:0 0 12px}.field{margin-bottom:16px}label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+textarea,input,select{font:14px Inter,sans-serif;width:100%;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg);color:var(--text)}
+textarea{min-height:210px;resize:vertical}input[type=color]{height:42px;padding:4px}input[type=file]{font-size:12px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}.full{grid-column:1/-1}.analyze{width:100%;padding:15px;font-size:15px;margin-top:14px}
+.notice{padding:13px 15px;border-radius:10px;background:#eaf5ff;color:#16466d;font-size:13px;margin:15px 0}.error{background:#fff0f0;color:#8c2020;padding:14px;border-radius:10px;margin-top:14px}
+.results{margin-top:22px;display:grid;gap:14px}.result h3{font-size:14px;text-transform:uppercase;letter-spacing:.5px;margin:0 0 12px}.score{display:flex;align-items:center;gap:18px}.score strong{font-size:48px;line-height:1;color:var(--accent)}.muted{color:var(--muted);font-size:13px}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{padding:6px 10px;border-radius:999px;background:#fff0e5;color:#8a3d06;font-size:12px;font-weight:700}
+ul{padding-left:20px;margin:0}li{margin:7px 0}.subgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.history-item{padding:10px;border:1px solid var(--border);border-radius:9px;margin-top:8px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+details summary{cursor:pointer;font-weight:700}.settings{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:760px){.grid,.subgrid{grid-template-columns:1fr}.full{grid-column:auto}.settings{grid-template-columns:1fr 1fr}.toolbar{align-items:flex-start}.score{align-items:flex-start}}
+</style>
+</head>
+<body>
+<header><h1 id="brandTitle">AI Career <span>Copilot</span></h1><p id="tagline">Turn your resume into a smarter job-search strategy.</p></header>
+<main class="wrap">
+<div class="toolbar"><div><strong>Resume Analyzer</strong><div class="muted">Your API key stays on the server when you run locally.</div></div>
+<div class="actions"><button class="btn" id="themeBtn">🌙 Dark mode</button><button class="btn" id="langBtn">हिन्दी / English</button><button class="btn" id="historyBtn">History</button><button class="btn" id="exportBtn" disabled>Export PDF</button></div></div>
+<details class="card"><summary>Customize app name and colors</summary><div class="settings">
+<div><label for="appName">App name</label><input id="appName" value="AI Career Copilot"></div>
+<div><label for="primaryColor">Header color</label><input type="color" id="primaryColor" value="#14213d"></div>
+<div><label for="accentColor">Accent color</label><input type="color" id="accentColor" value="#f97316"></div>
+</div><p class="hint">These visual settings apply immediately in this browser session.</p></details>
+<div class="notice">Tip: Use the full resume and full job description. AI-generated ATS scores are estimates, not hiring decisions.</div>
+<div class="grid">
+<section class="card"><h2>📄 Your Resume</h2><div class="field"><label for="resume">Resume text</label><textarea id="resume" placeholder="Paste your resume text here..."></textarea><div class="hint" id="resumeCount">0 characters</div></div>
+<label for="pdfFile">Or upload a PDF resume</label><input type="file" id="pdfFile" accept="application/pdf"><div class="hint">PDF text is extracted in your browser. Scanned/image-only PDFs may need OCR.</div></section>
+<section class="card"><h2>🎯 Target Job</h2><div class="field"><label for="jobDesc">Job description</label><textarea id="jobDesc" placeholder="Paste the full job description here..."></textarea><div class="hint" id="jobCount">0 characters</div></div><div class="field"><label for="language">Analysis language</label><select id="language"><option>English</option><option>Hindi</option></select></div></section>
+<div class="full"><button class="primary analyze" id="analyzeBtn">✨ Analyze resume</button><div id="message"></div></div>
+</div>
+<section id="results" class="results" aria-live="polite"></section>
+<section id="history" class="card" hidden style="margin-top:20px"><h2>Saved analysis history</h2><p class="muted">Stored only in this browser using localStorage.</p><div id="historyList"></div><button class="btn" id="clearHistory">Clear history</button></section>
+</main><footer>AI Career Copilot · Gemini-powered · Keep your API key private</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const $=id=>document.getElementById(id); let latestAnalysis=null, latestMeta=null, lang='English';
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function counts(){ $('resumeCount').textContent=$('resume').value.length+' characters';$('jobCount').textContent=$('jobDesc').value.length+' characters';}
+$('resume').addEventListener('input',counts);$('jobDesc').addEventListener('input',counts);
+$('pdfFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;if(file.type!=='application/pdf'){showError('Please choose a PDF file.');return;}try{if(!window.pdfjsLib)throw Error('PDF reader library did not load. Check your internet connection.');const data=new Uint8Array(await file.arrayBuffer());const pdf=await pdfjsLib.getDocument({data}).promise;let text='';for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();text+=content.items.map(x=>x.str).join(' ')+'\\n';}$('resume').value=text.trim();counts();$('message').innerHTML='<div class="notice">PDF text extracted from '+pdf.numPages+' page(s). Please review it before analysis.</div>'; }catch(err){showError(err.message||'Could not read this PDF.');}});
+function showError(msg){$('message').innerHTML='<div class="error">'+esc(msg)+'</div>';}
+$('analyzeBtn').addEventListener('click',async()=>{const resume=$('resume').value.trim(),jobDescription=$('jobDesc').value.trim();$('message').innerHTML='';$('results').innerHTML='';
+if(resume.length<50||jobDescription.length<50){showError('Please enter a resume and job description with at least 50 characters each.');return;}
+const btn=$('analyzeBtn');btn.disabled=true;btn.textContent='Analyzing…';
+try{const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({resume,jobDescription,language:$('language').value})});const data=await r.json();if(!r.ok)throw Error(data.error||'Request failed');latestAnalysis=data.analysis;latestMeta={resume,jobDescription,createdAt:new Date().toISOString(),model:data.model};render(data.analysis);saveHistory();$('exportBtn').disabled=false;}catch(e){showError(e.message||'Analysis failed.');}finally{btn.disabled=false;btn.textContent='✨ Analyze resume';}});
+function render(a){const score=Math.max(0,Math.min(100,Number(a.ats_score)||0));const salary=a.salary_estimate||{};const gaps=Array.isArray(a.skill_gap_analysis)?a.skill_gap_analysis:[];
+$('results').innerHTML=`<article class="result"><h3>🎯 ATS match estimate</h3><div class="score"><strong>${score}/100</strong><div><b>${score>=80?'Strong alignment':score>=60?'Moderate alignment':'More tailoring recommended'}</b><div class="muted">A rough alignment estimate, not a hiring prediction.</div></div></div></article>
+<article class="result"><h3>📝 Summary</h3><p>${esc(a.summary||'No summary provided.')}</p></article>
+<div class="subgrid"><article class="result"><h3>✅ Strengths</h3>${list(a.strengths)}</article><article class="result"><h3>💡 Improvements</h3>${list(a.improvements)}</article></div>
+<article class="result"><h3>🔎 Missing keywords</h3><div class="chips">${(a.missing_keywords||[]).map(k=>`<span class="chip">${esc(k)}</span>`).join('')||'<span class="muted">No keywords listed.</span>'}</div><p class="muted">Only add a keyword when it truthfully reflects your experience.</p></article>
+<article class="result"><h3>🧩 Skill gap analysis</h3>${gaps.length?'<ul>'+gaps.map(g=>`<li><b>${esc(g.skill)}</b> · ${esc(g.importance)} priority<br>${esc(g.evidence)}<br><span class="muted">Next step: ${esc(g.suggestion)}</span></li>`).join('')+'</ul>':'<p class="muted">No skill gaps returned.</p>'}</article>
+<article class="result"><h3>💼 Salary estimate</h3>${salary.low!=null&&salary.high!=null?`<b>${esc(salary.currency||'')} ${Number(salary.low).toLocaleString()} – ${Number(salary.high).toLocaleString()} / ${esc(salary.period||'year')}</b>`:'<p>Not enough information to give a responsible estimate.</p>'}<p class="muted">${esc(salary.confidence||'Low confidence')} · ${esc(salary.caveat||'Verify with current local salary data.')}</p></article>`;
+}
+function list(arr){return '<ul>'+((arr||[]).map(x=>'<li>'+esc(x)+'</li>').join('')||'<li>None provided.</li>')+'</ul>'}
+function saveHistory(){let h=JSON.parse(localStorage.getItem('careerCopilotHistory')||'[]');h.unshift({meta:latestMeta,analysis:latestAnalysis});localStorage.setItem('careerCopilotHistory',JSON.stringify(h.slice(0,10)));drawHistory();}
+function drawHistory(){const h=JSON.parse(localStorage.getItem('careerCopilotHistory')||'[]');$('historyList').innerHTML=h.length?h.map((x,i)=>`<div class="history-item"><span>${esc(new Date(x.meta.createdAt).toLocaleString())} · Score ${esc(x.analysis.ats_score)}</span><button class="btn" onclick="loadHistory(${i})">Load</button></div>`).join(''):'<p class="muted">No saved analyses yet.</p>';}
+window.loadHistory=i=>{const x=JSON.parse(localStorage.getItem('careerCopilotHistory')||'[]')[i];if(!x)return;$('resume').value=x.meta.resume;$('jobDesc').value=x.meta.jobDescription;latestMeta=x.meta;latestAnalysis=x.analysis;render(x.analysis);counts();$('exportBtn').disabled=false;window.scrollTo({top:0,behavior:'smooth'});};
+$('historyBtn').onclick=()=>{$('history').hidden=!$('history').hidden;drawHistory();};
+$('clearHistory').onclick=()=>{if(confirm('Delete all saved analysis history from this browser?')){localStorage.removeItem('careerCopilotHistory');drawHistory();}};
+$('themeBtn').onclick=()=>{document.body.classList.toggle('dark');$('themeBtn').textContent=document.body.classList.contains('dark')?'☀️ Light mode':'🌙 Dark mode';};
+$('langBtn').onclick=()=>{lang=lang==='English'?'Hindi':'English';$('language').value=lang;};
+$('appName').addEventListener('input',()=>{$('brandTitle').textContent=$('appName').value||'AI Career Copilot';});
+$('primaryColor').addEventListener('input',e=>document.documentElement.style.setProperty('--primary',e.target.value));
+$('accentColor').addEventListener('input',e=>document.documentElement.style.setProperty('--accent',e.target.value));
+$('exportBtn').onclick=()=>{if(!latestAnalysis||!window.jspdf){showError('PDF export library did not load. Check your internet connection.');return;}const {jsPDF}=window.jspdf;const doc=new jsPDF();let y=18;const lines=(label,value)=>{doc.setFont('helvetica','bold');doc.text(label,14,y);y+=7;doc.setFont('helvetica','normal');const arr=doc.splitTextToSize(String(value||'—'),180);for(const line of arr){if(y>280){doc.addPage();y=18;}doc.text(line,14,y);y+=6;}y+=4;};lines('AI Career Copilot — Resume Analysis','');lines('ATS match estimate',latestAnalysis.ats_score+'/100');lines('Summary',latestAnalysis.summary);lines('Strengths',(latestAnalysis.strengths||[]).join('\\n• '));lines('Missing keywords',(latestAnalysis.missing_keywords||[]).join(', '));lines('Recommended improvements',(latestAnalysis.improvements||[]).join('\\n• '));lines('Skill gap analysis',(latestAnalysis.skill_gap_analysis||[]).map(g=>`${g.skill} (${g.importance}): ${g.suggestion}`).join('\\n'));lines('Salary estimate',JSON.stringify(latestAnalysis.salary_estimate||{}));doc.save('career-copilot-analysis.pdf');};
+drawHistory();counts();
+</script></body></html>

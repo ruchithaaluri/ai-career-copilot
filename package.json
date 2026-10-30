@@ -1,0 +1,16 @@
+{
+  "name": "ai-career-copilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Career Copilot - secure Gemini resume analyzer with PDF upload, history, export, language toggle, and dark mode",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
